@@ -20,7 +20,6 @@ class MessageSenderTCP(private val SERVER_IP: String, private val PORT: Int) : M
     override fun sendMessage(msg: String)  {
         async {
             try {
-                Log.d(TAG, "ITT")
 
                 if (!socket.isConnected) {
                     socket = withContext(Dispatchers.IO) {
