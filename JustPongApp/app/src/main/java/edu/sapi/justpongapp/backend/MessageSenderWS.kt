@@ -1,5 +1,6 @@
 package edu.sapi.justpongapp.backend
 
+import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
@@ -21,6 +22,7 @@ class MessageSenderWS(private val SERVER_IP: String, private val PORT: Int) : Me
         async {
 //            val u = "ws://$SERVER_IP:$PORT/ws"
 
+            Log.d(TAG, "message sent")
             client.webSocket(method = HttpMethod.Get, host = SERVER_IP, port = PORT, path = "/ws") {
                 send(msg)
             }
@@ -29,6 +31,7 @@ class MessageSenderWS(private val SERVER_IP: String, private val PORT: Int) : Me
     }
 
     override fun close() {
+        Log.d(TAG, "client closed")
         client.close()
     }
 }
