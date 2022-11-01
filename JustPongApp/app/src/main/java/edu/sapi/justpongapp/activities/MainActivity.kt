@@ -11,6 +11,7 @@ import edu.sapi.justpongapp.R
 import edu.sapi.justpongapp.backend.MessageSender
 import edu.sapi.justpongapp.backend.MessageSenderTCP
 import edu.sapi.justpongapp.backend.MessageSenderUDP
+import edu.sapi.justpongapp.backend.MessageSenderWS
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -18,8 +19,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MAIN ACTIVITY"
         //  const val SERVER_IP = "10.0.99.109"
-//        const val SERVER_IP = "192.168.1.6"
-        const val SERVER_IP = "10.0.74.131"
+        const val SERVER_IP = "192.168.1.6"
+//        const val SERVER_IP = "10.0.74.131"
         const val PORT = 8000
     }
 
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
         })
 
 //        messageSender = MessageSenderTCP(SERVER_IP, PORT)
-        messageSender = MessageSenderUDP(SERVER_IP, PORT)
+//        messageSender = MessageSenderUDP(SERVER_IP, PORT)
+        messageSender = MessageSenderWS(SERVER_IP, PORT)
 
         sendButton.setOnClickListener{
             val msg = sendField.text.toString()
