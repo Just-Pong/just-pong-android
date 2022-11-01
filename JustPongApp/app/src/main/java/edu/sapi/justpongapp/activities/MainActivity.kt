@@ -12,6 +12,7 @@ import edu.sapi.justpongapp.backend.MessageSender
 import edu.sapi.justpongapp.backend.MessageSenderTCP
 import edu.sapi.justpongapp.backend.MessageSenderUDP
 import edu.sapi.justpongapp.backend.MessageSenderWS
+import edu.sapi.justpongapp.backend.models.Message
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -52,8 +53,9 @@ class MainActivity : AppCompatActivity() {
         sendButton.setOnClickListener{
             val msg = sendField.text.toString()
             try {
-                messageSender.sendMessage(msg)
-                Log.d(TAG, "{$msg} was sent")
+                val message = Message(msg)
+                messageSender.sendMessage(message.toJson())
+                Log.d(TAG, "{${message.toJson()}} was sent")
             } catch (e : IOException) {
                 Log.d(TAG, "{$msg} was not sent")
             }
