@@ -38,6 +38,8 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
 
             var dataSum = FloatArray(3);
 
+            // TODO: Remove retroactive of movement
+
             Log.d(TAG, accelDataQueue.size.toString());
             accelDataQueue.forEach {
                 dataSum[0] += it[0];
