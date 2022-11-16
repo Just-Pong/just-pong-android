@@ -8,10 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import edu.sapi.justpongapp.R
-import edu.sapi.justpongapp.backend.MessageSender
-import edu.sapi.justpongapp.backend.MessageSenderTCP
-import edu.sapi.justpongapp.backend.MessageSenderUDP
-import edu.sapi.justpongapp.backend.MessageSenderWS
+import edu.sapi.justpongapp.backend.*
 import edu.sapi.justpongapp.backend.models.Message
 import java.io.IOException
 
@@ -25,11 +22,15 @@ class MainActivity : AppCompatActivity() {
         const val PORT = 8000
     }
 
+    private lateinit var messageSender: MessageSender
+    private lateinit var movementService: MovementService
+
     lateinit var sendButton: Button
     private lateinit var sendField: EditText
-    private lateinit var messageSender: MessageSender
 
     private fun initComponents() {
+        movementService = MovementService(this.applicationContext)
+
         sendButton = findViewById(R.id.sendButton)
         sendButton.isClickable = false
 
@@ -69,10 +70,18 @@ class MainActivity : AppCompatActivity() {
         initComponents()
     }
 
+    override fun onPause() {
+        super.onPause()
+        movementService.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        movementService.resume()
+    }
+
     override fun onDestroy() {
         messageSender.close()
         super.onDestroy()
     }
-
-
 }
