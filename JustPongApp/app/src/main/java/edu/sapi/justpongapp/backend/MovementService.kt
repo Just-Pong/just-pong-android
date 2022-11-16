@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import java.util.*
+import kotlin.math.abs
 
 class MovementService(context: Context) : ContextWrapper(context), SensorEventListener {
     val TAG = "MovementService";
@@ -25,6 +26,11 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
     private var accelDataQueue: Queue<FloatArray> = LinkedList();
 
     private lateinit var mainHandler: Handler;
+
+    companion object {
+        // Might need adjustment
+        val THRESHOLD: Double = 0.5;
+    }
 
     private val processMovement = object: Runnable {
         override fun run() {
@@ -86,7 +92,9 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
                     nA_W[1] = (Math.round((nA_W[1] - A_W[1]) * 100.0) / 100.0).toFloat();
                     nA_W[2] = (Math.round((nA_W[2] - A_W[2]) * 100.0) / 100.0).toFloat();
 
-                    this.accelDataQueue.add(nA_W);
+                    if (abs(nA_W.average()) > THRESHOLD) {
+                        this.accelDataQueue.add(nA_W);
+                    }
                 }
 
                 this.lastEarthAccelData = A_W;
