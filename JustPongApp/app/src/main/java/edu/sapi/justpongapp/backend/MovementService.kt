@@ -25,6 +25,7 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
     private var lastMagneticData: FloatArray? = null;
     private var lastEarthAccelData: FloatArray? = null;
     private var accelDataQueue: Queue<FloatArray> = LinkedList();
+    private var avgGroupQueue: Queue<FloatArray> = LinkedList();
     private var position: Position = Position(MAX_POSITION, MAX_VELOCITY);
 
     private lateinit var mainHandler: Handler;
@@ -32,29 +33,46 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
     companion object {
         // Might need adjustment
         val THRESHOLD: Double = 0.5;
+        val TIME: Long = 25;
+        val AVG_GROUP_LENGTH: Int = 5;
         val MAX_POSITION: Double = 1000.0;
         val MAX_VELOCITY: Double = 250.0;
     }
 
     private val processMovement = object: Runnable {
         override fun run() {
-            mainHandler.postDelayed(this, 1000);
+            mainHandler.postDelayed(this, TIME);
 
-            var dataSum = FloatArray(3);
+            var accDataSum = FloatArray(3);
 
             // TODO: Remove retroactive of movement
 
-            Log.d(TAG, accelDataQueue.size.toString());
+            //Log.d(TAG, accelDataQueue.size.toString());
             accelDataQueue.forEach {
-                dataSum[0] += it[0];
-                dataSum[1] += it[1];
-                dataSum[2] += it[2];
+                accDataSum[0] += it[0];
+                accDataSum[1] += it[1];
+                accDataSum[2] += it[2];
             }
             accelDataQueue.clear();
+            avgGroupQueue.add(accDataSum);
 
-            Log.d(TAG, dataSum.toList().toString());
+            if (avgGroupQueue.size == AVG_GROUP_LENGTH) {
+                var d: Double = 0.0;
+
+                avgGroupQueue.forEach {
+                    d += it[2] * AVG_GROUP_LENGTH * TIME;
+                }
+
+                avgGroupQueue.clear();
+
                 position.move(d);
+
+                Log.d(TAG, "$d");
                 Log.d(TAG, "Current height: ${position.getPosition()}")
+            }
+
+            //Log.d(TAG, accDataSum.toList().toString());
+            //Log.d(TAG, "d: $currHeight v: $velocity a: ${accDataSum[2]}");
         }
     }
 
