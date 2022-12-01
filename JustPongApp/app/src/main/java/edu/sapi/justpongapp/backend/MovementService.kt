@@ -9,6 +9,7 @@ import android.hardware.SensorManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import edu.sapi.justpongapp.backend.models.Position
 import java.util.*
 import kotlin.math.abs
 
@@ -24,12 +25,15 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
     private var lastMagneticData: FloatArray? = null;
     private var lastEarthAccelData: FloatArray? = null;
     private var accelDataQueue: Queue<FloatArray> = LinkedList();
+    private var position: Position = Position(MAX_POSITION, MAX_VELOCITY);
 
     private lateinit var mainHandler: Handler;
 
     companion object {
         // Might need adjustment
         val THRESHOLD: Double = 0.5;
+        val MAX_POSITION: Double = 1000.0;
+        val MAX_VELOCITY: Double = 250.0;
     }
 
     private val processMovement = object: Runnable {
@@ -49,6 +53,8 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
             accelDataQueue.clear();
 
             Log.d(TAG, dataSum.toList().toString());
+                position.move(d);
+                Log.d(TAG, "Current height: ${position.getPosition()}")
         }
     }
 
