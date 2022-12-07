@@ -39,6 +39,10 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
         val MAX_VELOCITY: Double = 250.0;
     }
 
+    fun getPositiond(): Double {
+        return position.getPosition();
+    }
+
     private val processMovement = object: Runnable {
         override fun run() {
             mainHandler.postDelayed(this, TIME);
