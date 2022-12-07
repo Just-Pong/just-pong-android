@@ -8,9 +8,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import edu.sapi.justpongapp.R
-import edu.sapi.justpongapp.backend.MessageSender
-import edu.sapi.justpongapp.backend.MessageSenderTCP
-import edu.sapi.justpongapp.backend.MessageSenderUDP
+import edu.sapi.justpongapp.backend.*
+import edu.sapi.justpongapp.backend.models.Message
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -18,16 +17,20 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MAIN ACTIVITY"
         //  const val SERVER_IP = "10.0.99.109"
-//        const val SERVER_IP = "192.168.1.6"
-        const val SERVER_IP = "10.0.74.131"
+        const val SERVER_IP = "192.168.1.6"
+//        const val SERVER_IP = "10.0.74.131"
         const val PORT = 8000
     }
 
+    private lateinit var messageSender: MessageSender
+    private lateinit var movementService: MovementService
+
     lateinit var sendButton: Button
     private lateinit var sendField: EditText
-    private lateinit var messageSender: MessageSender
 
     private fun initComponents() {
+        movementService = MovementService(this.applicationContext)
+
         sendButton = findViewById(R.id.sendButton)
         sendButton.isClickable = false
 
@@ -45,13 +48,15 @@ class MainActivity : AppCompatActivity() {
         })
 
 //        messageSender = MessageSenderTCP(SERVER_IP, PORT)
-        messageSender = MessageSenderUDP(SERVER_IP, PORT)
+//        messageSender = MessageSenderUDP(SERVER_IP, PORT)
+        messageSender = MessageSenderWS(SERVER_IP, PORT)
 
         sendButton.setOnClickListener{
             val msg = sendField.text.toString()
             try {
-                messageSender.sendMessage(msg)
-                Log.d(TAG, "{$msg} was sent")
+                val message = Message(msg)
+                messageSender.sendMessage(message.toJson())
+                Log.d(TAG, "{${message.toJson()}} was sent")
             } catch (e : IOException) {
                 Log.d(TAG, "{$msg} was not sent")
             }
@@ -65,10 +70,18 @@ class MainActivity : AppCompatActivity() {
         initComponents()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        messageSender.close()
+    override fun onPause() {
+        super.onPause()
+        movementService.pause()
     }
 
+    override fun onResume() {
+        super.onResume()
+        movementService.resume()
+    }
 
+    override fun onDestroy() {
+        messageSender.close()
+        super.onDestroy()
+    }
 }
