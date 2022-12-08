@@ -14,12 +14,25 @@ import java.util.*
 import kotlin.math.abs
 
 class MovementService(context: Context) : ContextWrapper(context), SensorEventListener {
-    val TAG = "MovementService";
 
-    private var sensorManager: SensorManager;
-    private var accelerometerSensor: Sensor? = null;
-    private var gravitySensor: Sensor? = null;
-    private var magneticSensor: Sensor? = null;
+    companion object {
+        const val TAG = "MovementService"
+
+        // Might need adjustment
+        const val THRESHOLD: Double = 0.5
+        const val TIME: Long = 25
+        const val AVG_GROUP_LENGTH: Int = 5
+        const val MAX_POSITION: Double = 1000.0
+        const val MAX_VELOCITY: Double = 250.0
+    }
+
+
+    private var sensorManager: SensorManager =
+        getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    private var accelerometerSensor: Sensor? = null
+    private var gravitySensor: Sensor? = null
+    private var magneticSensor: Sensor? = null
 
     private var lastGravityData: FloatArray? = null;
     private var lastMagneticData: FloatArray? = null;
@@ -30,24 +43,13 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
 
     private lateinit var mainHandler: Handler;
 
-    companion object {
-        // Might need adjustment
-        val THRESHOLD: Double = 0.5;
-        val TIME: Long = 25;
-        val AVG_GROUP_LENGTH: Int = 5;
-        val MAX_POSITION: Double = 1000.0;
-        val MAX_VELOCITY: Double = 250.0;
-    }
-
-    fun getPositiond(): Double {
-        return position.getPosition();
-    }
+    fun getPositionD(): Double = position.currPosition;
 
     private val processMovement = object: Runnable {
         override fun run() {
             mainHandler.postDelayed(this, TIME);
 
-            var accDataSum = FloatArray(3);
+            val accDataSum = FloatArray(3);
 
             // TODO: Remove retroactive of movement
 
@@ -71,8 +73,8 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
 
                 position.move(d);
 
-                Log.d(TAG, "$d");
-                Log.d(TAG, "Current height: ${position.getPosition()}")
+//                Log.d(TAG, "$d");
+//                Log.d(TAG, "Current height: ${position.getPosition()}")
             }
 
             //Log.d(TAG, accDataSum.toList().toString());
@@ -81,8 +83,6 @@ class MovementService(context: Context) : ContextWrapper(context), SensorEventLi
     }
 
     init {
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager;
-
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);

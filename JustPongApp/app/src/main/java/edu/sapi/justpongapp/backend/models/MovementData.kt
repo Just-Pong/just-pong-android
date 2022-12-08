@@ -1,10 +1,12 @@
 package edu.sapi.justpongapp.backend.models
 
-data class MovementData(val x: Double, val y: Double, val z: Double): BaseEntity() {
-    val timestampInMillis = System.currentTimeMillis();
-    val timestamp = timestampInMillis / 1000;
+import com.google.gson.Gson
+
+data class MovementData(val position: Double): BaseEntity() {
+//    private val timestampInMillis = System.currentTimeMillis();
+//    val timestamp = timestampInMillis / 1000;
 
     override fun toJson(): String {
-        return gson.toJson(this)
+        return Gson().toJson(this)
     }
 }
