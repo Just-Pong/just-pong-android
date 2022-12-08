@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_start_game">
+
+    <fragment android:id="@+id/fragment_start_game"
+        android:name="edu.sapi.justpongapp.ui.StartGameFragment"
+        android:label="Start Game"
+        tools:layout="@layout/fragment_start_game">
+        <action
+            android:id="@+id/action_fragment_start_game_to_fragment_game"
+            app:destination="@id/fragment_game" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_game"
+        android:name="edu.sapi.justpongapp.ui.GameFragment"
+        android:label="Game"
+        tools:layout="@layout/fragment_game">
+
+    </fragment>
+
+</navigation>

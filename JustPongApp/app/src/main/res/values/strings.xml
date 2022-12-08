@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">JustPongApp</string>
-    <string name="send_button">Send</string>
-    <string name="send_edit_text">Send something to the server</string>
+    <string name="start">Start</string>
+    <string name="game_id">Game id here</string>
+    <string name="resume">Resume</string>
+    <string name="pause">Pause</string>
 </resources>
